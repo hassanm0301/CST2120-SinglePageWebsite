@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<head>
+    <title>Steam Rev</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="http://localhost:8081/get.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="header">
+        <h1>Steam Review</h1>
+
+        <div id="login" style="float: right;">
+            <p>Login</p>
+        </div>
+    </div>
+
+    <div id="pageDesc">
+        <p>
+            This is a small description of the website<br>
+            Desc1 <br>
+            Desc2 <br>
+            Desc3 <br>
+            Desc4 <br>
+
+        </p>
+    </div>
+
+    <form id="criteria">
+        <label for="sorting">Sort By:</label>
+        <select name="sorting">
+            <option value="name">Name</option>
+            <option value="name">Name</option>
+        </select>
+
+        <label for="search">Search: </label>
+        <input type="text" name="search">
+
+        <br>
+
+        <input type="submit" name="submit">
+    </form>
+    
+</body>
