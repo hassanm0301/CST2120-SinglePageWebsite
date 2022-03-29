@@ -1,15 +1,10 @@
 import express from "express";
-import cors from "cors";
 import fetch from 'node-fetch';
 
 const app = express();
 
 app.use(express.static('public'));
 
-app.use(cors({
-    origin: 'https://api.steampowered.com/',
-    methods: "GET,PUT,POST,DELETE"
-}));
 
 var server = app.listen(8081, function () {
     var host = server.address().address;
