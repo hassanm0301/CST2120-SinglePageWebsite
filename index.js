@@ -1,59 +1,69 @@
 import express from "express";
 import fetch from 'node-fetch';
 import mariadb from 'mariadb';
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import session from "express-session";
 
 const app = express();
+
+app.use(cookieParser());
+
+// connection details for MariaDB
 const pool = mariadb.createPool({
-  host: "localhost:3306",
+  host: "localhost",
+  port: 3306,
   user: "root",
-  password: ""
+  database: "steamreview"
 });
 
+
+// allows executions of js functions in folder public
 app.use(express.static('public'));
 
-// Error handling for mariadb
-pool.getConnection()
-    .then(conn => {
-    
-        conn.query("SELECT 1 as val").then((rows) => {
-            console.log(rows); //[ {val: 1}, meta: ... ]
-            //Table must have been created before 
-            // " CREATE TABLE myTable (id int, val varchar(255)) "
-            return conn.query("INSERT INTO myTable value (?, ?)", [1, "mariadb"]);
-        })
-        .then((res) => {
-            console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
-            conn.end();
-        })
-        .catch(err => {
-            //handle error
-            console.log(err); 
-            conn.end();
-        })
-        
-    }).catch(err => {
-        //not connected
-    });
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.raw());
 
 // opens port 8081
-var server = app.listen(8081, function () {
-    var host = server.address().address;
-    var port = server.address().port;
+var server = app.listen(42069, function () {
+	var host = server.address().address;
+	var port = server.address().port;
 
-    console.log("App listening at http://%s:%s", host, port);
+	console.log("App listening at http://%s:%s", host, port);
+});
+
+// sends query to database and returns response
+app.post("/login", async function(req, response){
+	let conn;
+	try {
+		conn = await pool.getConnection();
+		let res = await conn.query("select User_ID from users where Email=? and Password=?", [req.body.email, req.body.password]);
+		delete res.meta;
+		if(res.length != 0){
+			console.log(res[0]);
+			console.log("logged in success");
+			response.send(res[0]);
+		}
+		else{
+			console.log("error");
+			response.send({error:"error"});
+		}
+	} 
+	catch (err) {
+		console.log(err);
+	  	return err;
+	}
+	finally {
+	  	if (conn){
+			return conn.end();
+	  	}
+	}
 })
 
 // redirects to page on connection
 app.get('/', function (req, res) {
-    res.sendFile(process.cwd()+'/page.html');
-})
+	res.sendFile(process.cwd()+'/page.html');
+});
 
-app.get('/getAppList', async function (req, res) {
-    let response = await fetch("https://api.steampowered.com/ISteamApps/GetAppList/v2/");
-    if (response.ok) {
-        let json = await response.json();
-        res.send(json);
-      } else {
-        res.send("HTTP-Error: " + response.status);
-      }
-})
+
