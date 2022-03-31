@@ -1,3 +1,16 @@
+function checkLogin(){
+	$.get("http://localhost:42069/checkLogin", (res, status) => {
+		if(res.loggedin == true){
+			// hide login box
+			console.log("the user is logged in")
+		}
+		else{
+			console.log("the use is not logged in")
+		}
+	});
+}
+
+
 // sends login information to server
 $(document).ready(function () {
     $("#loginForm").submit(function (event) {
@@ -15,6 +28,7 @@ $(document).ready(function () {
         encode: true,
       }).done(function (data) {
         console.log(data);
+		checkLogin();
       });
     });
   });
