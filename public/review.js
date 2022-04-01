@@ -7,7 +7,9 @@ function displayReview(Game_ID){
         dataType: "json",
         encode: true,
       }).done(function (data) {
-        console.log(data);
+        data.forEach(element => {
+            createReviewBox(element);
+        });
       });
 };
 
@@ -33,3 +35,20 @@ function postReview(textID, ratingID, Game_ID) {
       }
     });
 };
+
+function createReviewBox(reviewData){
+    let parentNode = $(`#game${reviewData.Game_ID}`)
+    let childNode = `
+    <div class="ratingBox">
+            <h3>${reviewData.Email}</h3>
+            <div class="reviewDetails">
+                <p>
+                    ${reviewData.Rating} <br>
+                    ${reviewData.Content}
+                </p>
+            </div>
+        </div>
+
+    `;
+    parentNode.append(childNode);
+}
