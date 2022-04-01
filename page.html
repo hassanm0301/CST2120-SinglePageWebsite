@@ -6,32 +6,46 @@
     <script src="http://localhost:42069/search.js"></script>
     <script src="http://localhost:42069/review.js"></script>
     <script src="https://malsup.github.io/jquery.form.js"></script> 
-    <link rel="stylesheet" href="http:://localhost:42069/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 
 
-<body>
-    <div id="header">
-        <h1>Steam Review</h1>
-
-        <div id="login">
-            <img src="" alt="login">
-            <div>
-                <form id="loginForm" method="post">
-                    <label for="email">Username</label>
-                    <input type="text" name="email" id="emailLogin">
-
-                    <br>
-
-                    <label for="password">Password</label>
-                    <input type="text" name="password" id="passwordLogin">
-
-                    <br>
-
-                    <input type="submit">
-                </form>
-            </div>
+<body class="global">
+    <div id="header" class="row">
+        <div class="col-md-6">
+            <img src="/img/steamReview.png" alt="" width="375" height="60">
         </div>
+
+        <div id="login" class="col-md-6 row">
+            <div class="col-md-10"></div>
+            <div class="col-md-2">
+                <img src="/img/user.png" alt="login" height="70" width="70" id="userIcon">
+            </div>
+            
+        </div>
+    </div>
+    <div>
+        <form id="loginForm" method="post">
+            <div>
+                <label for="email">Username</label>
+                <input type="text" name="email" id="emailLogin">
+            </div>
+            
+
+            <br>
+
+            <div>
+                <label for="password">Password</label>
+                <input type="text" name="password" id="passwordLogin">
+            </div>
+
+            <br>
+            <div>
+                <input type="submit">
+            </div>
+            
+        </form>
     </div>
 
     <div id="pageDesc">
@@ -55,22 +69,14 @@
         <label for="search">Search: </label>
         <input type="text" name="search" id="search">
 
-        <br>
-
         <input type="submit" name="submit">
     </form>
 
+    <div id="searchResults">
+
+    </div>
+
     <div class="gameBox">
-        <img alt="gameImg">
-        <h2>Game Name</h2>
-        <div class="detailBox">
-            <p>
-                Number of reviews <br>
-                Rating <br>
-                Description <br>
-            </p>
-        </div>
-        <img src="" alt="downArrow" onclick="displayReview('1')">
 
         <div class="ratingBox">
             <h3>Username</h3>
@@ -82,7 +88,7 @@
             </div>
         </div>
 
-        <div>
+        <!--<div>
             <textarea name="review" id="reviewContent" cols="30" rows="5"></textarea>
             <select name="rating" id="rating">
                 <option value=1>1</option>
@@ -92,7 +98,7 @@
                 <option value=5>5</option>
             </select>
             <button type="submit" onclick="postReview('#reviewContent', '#rating', 1)">Post Review</button>
-        </div>
+        </div>-->
     </div>
     
 </body>
