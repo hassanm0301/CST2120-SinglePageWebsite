@@ -110,7 +110,6 @@ app.post("/search", async (req, res) => {
 		return 0;
 	});
 
-	console.log(query)
 	res.send(query);
 
 	return connection.end();
@@ -119,10 +118,12 @@ app.post("/search", async (req, res) => {
 app.use("/displayReview", async(req, res)=>{
 	let Game_ID = req.body.Game_ID;
 
-	console.log(Game_ID);
 	let connection = await pool.getConnection();
 
-	let query = await connection.query("select * from reviews where Game_ID=?", [Game_ID]);
+	let query = await connection.query("select reviews.User_ID, Reviews.Content, Reviews.Rating, users.Email, reviews.Game_ID \
+		from reviews \
+		inner join users on reviews.User_ID=users.User_ID\
+		where Game_ID=?", [Game_ID]);
 	delete query.meta;
 
 	res.send(query);
