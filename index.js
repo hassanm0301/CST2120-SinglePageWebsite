@@ -80,6 +80,7 @@ app.post("/login", async function(req, response){
 	}
 })
 
+// checks if user is logged in; returns bool
 app.get("/checkLogin", (req, res) => {
 	currentSession = req.session;
 	if(currentSession.userID){
@@ -90,6 +91,7 @@ app.get("/checkLogin", (req, res) => {
 	}
 });
 
+// searches for games and required data
 app.post("/search", async (req, res) => {
 	let sorting = req.body.sorting;
 	let search = req.body.search;
@@ -115,6 +117,7 @@ app.post("/search", async (req, res) => {
 	return connection.end();
 });
 
+// queries reviews for particular game_ID
 app.use("/displayReview", async(req, res)=>{
 	let Game_ID = req.body.Game_ID;
 
@@ -130,6 +133,7 @@ app.use("/displayReview", async(req, res)=>{
 	return connection.end();
 });
 
+// inserts review into DB and updates ratings
 app.use("/postReview", async (req, res) => {
 	let reviewContent = req.body.content;
 	let Game_ID = req.body.Game_ID;
