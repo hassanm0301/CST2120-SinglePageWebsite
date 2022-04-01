@@ -43,6 +43,11 @@ var server = app.listen(42069, function () {
 	console.log("App listening at http://%s:%s", host, port);
 });
 
+// redirects to page on connection
+app.get('/', function (req, res) {
+	res.sendFile(process.cwd()+'/page.html');
+});
+
 // sends query to database and returns response
 app.post("/login", async function(req, response){
 	let conn;
@@ -54,7 +59,7 @@ app.post("/login", async function(req, response){
 		delete res.meta;
 		if(res.length != 0){
 			currentSession = req.session;
-			currentSession.email = email;
+			currentSession.userID = res[0].User_ID;
 			console.log(req.session);
 			console.log("logged in success");
 			response.send({email});
@@ -75,18 +80,78 @@ app.post("/login", async function(req, response){
 	}
 })
 
-// redirects to page on connection
-app.get('/', function (req, res) {
-	res.sendFile(process.cwd()+'/page.html');
-});
-
 app.get("/checkLogin", (req, res) => {
-	console.log("check called")
 	currentSession = req.session;
-	if(currentSession.email){
+	if(currentSession.userID){
 		res.send({loggedin: true})
 	}
 	else{
 		res.send({loggedin: false})
 	}
 });
+
+app.post("/search", async (req, res) => {
+	let sorting = req.body.sorting;
+	let search = req.body.search;
+
+	let connection = await pool.getConnection();
+
+	let query = await connection.query("select * from games where name like '%" + search + "%'");
+	delete query.meta;
+
+	query.sort((a, b) =>{
+		console.log(a[sorting])
+		if(a[sorting]<b[sorting]){
+			return -1;
+		}
+		if(a[sorting]>b[sorting]){
+			return 1;
+		}
+		return 0;
+	});
+
+	console.log(query)
+	res.send(query);
+
+	return connection.end();
+});
+
+app.use("/displayReview", async(req, res)=>{
+	let Game_ID = req.body.Game_ID;
+
+	console.log(Game_ID);
+	let connection = await pool.getConnection();
+
+	let query = await connection.query("select * from reviews where Game_ID=?", [Game_ID]);
+	delete query.meta;
+
+	res.send(query);
+	return connection.end();
+});
+
+app.use("/postReview", async (req, res) => {
+	let reviewContent = req.body.content;
+	let Game_ID = req.body.Game_ID;
+	let rating = req.body.rating;
+
+	let connection = await pool.getConnection();
+
+	let queryLastReview = await connection.query("select max(review_ID) from reviews");
+	delete queryLastReview.meta;
+
+	let insertReviewRes = await connection.query("insert into reviews values (?,?,?,?,?)", [
+		queryLastReview[0]["max(review_ID)"] + 1,
+		currentSession.userID,
+		Game_ID,
+		reviewContent,
+		rating
+	]);
+
+	await connection.query("update games set rating_number=rating_number+1 ave_rating=((ave_rating*rating_number)+?)/rating_number+1", [
+		rating
+	]);
+
+	console.log(insertReviewRes);
+	res.send({status: "ok"});
+	return connection.end();
+})
