@@ -147,11 +147,12 @@ app.use("/postReview", async (req, res) => {
 		rating
 	]);
 
-	await connection.query("update games set rating_number=rating_number+1 ave_rating=((ave_rating*rating_number)+?)/rating_number+1", [
-		rating
+	let updateGamesRes = await connection.query("update games set ave_rating=((ave_rating*rating_number)+?)/(rating_number+1), rating_number=rating_number+1 where Game_ID=?", [
+		rating,
+		Game_ID
 	]);
 
-	console.log(insertReviewRes);
+	console.log(updateGamesRes);
 	res.send({status: "ok"});
 	return connection.end();
 })
