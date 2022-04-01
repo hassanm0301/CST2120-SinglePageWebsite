@@ -5,7 +5,7 @@ function checkLogin(){
 			console.log("the user is logged in")
 		}
 		else{
-			console.log("the use is not logged in")
+			console.log("the user is not logged in")
 		}
 	});
 }
